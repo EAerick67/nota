@@ -50,6 +50,33 @@
   $('messagePreset').addEventListener('change', e => {
     if (e.target.value !== '') { $('messageText').value = messages[Number(e.target.value)]; updatePreview(); }
   });
+  // Busca bíblica via Cloudflare Pages Function; a chave Gemini permanece no servidor.
+  $('searchBible').addEventListener('click', searchBible);
+  $('bibleQuery').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); searchBible(); } });
+  async function searchBible() {
+    const query = $('bibleQuery').value.trim(), status = $('bibleSearchStatus'), results = $('bibleResults'), button = $('searchBible');
+    if (!query) { status.textContent = 'Digite uma referência ou tema bíblico para pesquisar.'; return; }
+    button.disabled = true; button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando…';
+    status.textContent = 'Consultando o Gemini…'; results.hidden = true; results.replaceChildren();
+    try {
+      const response = await fetch('/api/biblia', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Não foi possível consultar o Gemini.');
+      if (!Array.isArray(data.results) || !data.results.length) throw new Error('Nenhuma sugestão encontrada. Tente outra busca.');
+      data.results.forEach(item => {
+        const card=document.createElement('article'); card.className='bible-result';
+        const title=document.createElement('strong'); title.textContent=item.reference || 'Referência bíblica';
+        const verse=document.createElement('p'); verse.textContent=item.text || '';
+        const noteText=document.createElement('small'); noteText.textContent=item.note || 'Confira a referência na tradução de sua preferência.';
+        const use=document.createElement('button'); use.type='button'; use.className='use-verse-button'; use.textContent='Usar na homenagem';
+        use.addEventListener('click',()=>{ $('messageText').value=`${item.reference || ''}\n${item.text || ''}${item.note ? '\n\n'+item.note : ''}`.trim(); updatePreview(); status.textContent='Passagem inserida na homenagem.'; toast('Passagem bíblica adicionada à homenagem.'); $('messageText').scrollIntoView({behavior:'smooth',block:'center'}); });
+        card.append(title,verse,noteText,use); results.appendChild(card);
+      });
+      results.hidden=false; status.textContent=`${data.results.length} sugestão(ões). Escolha uma para inserir na homenagem.`;
+    } catch(err) { status.textContent=err.message || 'Falha na busca. Confira a conexão e a configuração da API.'; }
+    finally { button.disabled=false; button.innerHTML='<i class="fa-solid fa-magnifying-glass"></i> Buscar'; }
+  }
+
 
   document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === button));

@@ -47,6 +47,13 @@
         <div class="field"><label for="messageText">Mensagem de homenagem</label><textarea id="messageText" rows="4" placeholder="Escreva uma mensagem respeitosa..."></textarea></div>
         <div class="field"><label for="portraitUpload">Foto do falecido(a)</label><input id="portraitUpload" type="file" accept="image/*"><p class="hint">A imagem fica centralizada e recortada dentro da moldura.</p></div>
         <div class="quick-messages"><label for="messagePreset">Mensagens prontas</label><select id="messagePreset"><option value="">Escolha uma homenagem...</option></select></div>
+        <div class="bible-search-card">
+          <label for="bibleQuery"><i class="fa-solid fa-book-bible"></i> Buscar passagem bíblica com Gemini</label>
+          <p class="hint">Digite uma referência ou tema, por exemplo: “Provérbios 3:5-6”, “Salmo 23” ou “consolo para a família”.</p>
+          <div class="bible-search-row"><input id="bibleQuery" type="search" placeholder="Ex.: Provérbios sobre sabedoria" autocomplete="off"><button id="searchBible" class="search-button" type="button"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button></div>
+          <div id="bibleSearchStatus" class="hint" aria-live="polite">Configure a chave Gemini no Cloudflare para ativar a busca.</div>
+          <div id="bibleResults" class="bible-results" hidden></div>
+        </div>
       </div>
       <div class="tab-pane" id="pane-visual">
         <div class="section-label">Tamanho da foto</div><div class="zoom-row"><button class="secondary-button" id="zoomOut" type="button"><i class="fa-solid fa-minus"></i> Diminuir</button><button class="secondary-button" id="zoomIn" type="button"><i class="fa-solid fa-plus"></i> Aumentar</button><button class="secondary-button" id="zoomReset" type="button">Centralizar</button></div>
