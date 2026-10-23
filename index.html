@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#167c54">
+  <title>Painel Memorial — Notas e Homenagens</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body data-theme="cacto" data-mode="light" data-accent="emerald">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><i class="fa-solid fa-dove"></i></div>
+      <div><strong>Painel Memorial</strong><small>Notas de falecimento & homenagens</small></div>
+    </div>
+    <div class="top-controls">
+      <label class="control-label" for="themeSelect">Tema</label>
+      <select id="themeSelect" aria-label="Tema global">
+        <option value="cacto">Estilo Cacto</option><option value="netflix">Estilo Netflix</option><option value="cloudflare">Estilo Cloudflare</option>
+      </select>
+      <button id="modeToggle" class="icon-button" type="button" title="Alternar dia/noite"><i class="fa-solid fa-moon"></i><span class="sr-only">Alternar modo</span></button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="editor-panel panel">
+      <div class="panel-heading"><div><p class="eyebrow">PERSONALIZAÇÃO</p><h1>Editor da nota</h1></div><span class="step-chip">01 / 02</span></div>
+      <div class="tabs" role="tablist"><button class="tab active" data-tab="dados" role="tab">Dados</button><button class="tab" data-tab="visual" role="tab">Visual</button><button class="tab" data-tab="ia" role="tab">Mockup / IA</button></div>
+      <div class="tab-pane active" id="pane-dados">
+        <div class="preset-row"><button class="preset-button" id="presetMale"><i class="fa-solid fa-user-tie"></i> Exemplar masculino</button><button class="preset-button" id="presetFemale"><i class="fa-solid fa-user"></i> Exemplar feminino</button></div>
+        <div class="field"><label for="fullName">Nome completo do falecido(a)</label><input id="fullName" placeholder="Nome completo" autocomplete="off"></div>
+        <div class="field-grid">
+          <div class="field"><label for="birthDate">Data de nascimento</label><input id="birthDate" type="date"></div>
+          <div class="field"><label for="deathDate">Data de falecimento</label><input id="deathDate" type="date"></div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label for="wakeTime">Início do velório</label><input id="wakeTime" placeholder="Ex.: 14h"></div>
+          <div class="field"><label for="burialTime">Sepultamento / cremação</label><input id="burialTime" placeholder="Ex.: amanhã, 10h"></div>
+        </div>
+        <div class="field"><label for="wakePlace">Local do velório</label><input id="wakePlace" placeholder="Nome e endereço do local"></div>
+        <div class="field"><label for="burialPlace">Local do sepultamento</label><input id="burialPlace" placeholder="Cemitério / crematório"></div>
+        <div class="field"><label for="messageText">Mensagem de homenagem</label><textarea id="messageText" rows="4" placeholder="Escreva uma mensagem respeitosa..."></textarea></div>
+        <div class="field"><label for="portraitUpload">Foto do falecido(a)</label><input id="portraitUpload" type="file" accept="image/*"><p class="hint">A imagem fica centralizada e recortada dentro da moldura.</p></div>
+        <div class="quick-messages"><label for="messagePreset">Mensagens prontas</label><select id="messagePreset"><option value="">Escolha uma homenagem...</option></select></div>
+      </div>
+      <div class="tab-pane" id="pane-visual">
+        <div class="section-label">Tamanho da foto</div><div class="zoom-row"><button class="secondary-button" id="zoomOut" type="button"><i class="fa-solid fa-minus"></i> Diminuir</button><button class="secondary-button" id="zoomIn" type="button"><i class="fa-solid fa-plus"></i> Aumentar</button><button class="secondary-button" id="zoomReset" type="button">Centralizar</button></div>
+        <div class="section-label">Moldura</div><div class="choice-grid" id="frameChoices">
+          <button class="choice active" data-frame="classic">Clássica</button><button class="choice" data-frame="black">Preta</button><button class="choice" data-frame="gold">Dourada</button><button class="choice" data-frame="floral">Floral sutil</button>
+        </div>
+        <div class="section-label">Fundo da nota</div><div class="swatch-row" id="paperChoices">
+          <button class="swatch active" data-paper="ivory" aria-label="Marfim" title="Marfim"></button><button class="swatch" data-paper="white" aria-label="Branco" title="Branco"></button><button class="swatch" data-paper="sage" aria-label="Verde suave" title="Verde suave"></button><button class="swatch" data-paper="rose" aria-label="Rosé" title="Rosé"></button><button class="swatch" data-paper="slate" aria-label="Cinza" title="Cinza"></button>
+        </div>
+        <div class="section-label">Tipografia</div><div class="choice-grid" id="fontChoices">
+          <button class="choice active" data-font="serif">Serifada elegante</button><button class="choice" data-font="sans">Sans-serif limpa</button><button class="choice" data-font="script">Manuscrita</button>
+        </div>
+        <div class="section-label">Cor dos botões</div><div class="swatch-row button-colors">
+          <button class="color-dot active" data-accent="emerald" aria-label="Verde Emerald" title="Verde Emerald"></button><button class="color-dot" data-accent="ocean" aria-label="Azul Ocean" title="Azul Ocean"></button><button class="color-dot" data-accent="royal" aria-label="Roxo Royal" title="Roxo Royal"></button><button class="color-dot" data-accent="gold" aria-label="Amarelo Gold" title="Amarelo Gold"></button><button class="color-dot" data-accent="ruby" aria-label="Vermelho Ruby" title="Vermelho Ruby"></button>
+        </div>
+      </div>
+      <div class="tab-pane" id="pane-ia">
+        <div class="upload-card"><div class="upload-icon"><i class="fa-regular fa-image"></i></div><h3>Usar mockup de referência</h3><p>Envie uma imagem de referência do Pinterest ou do seu dispositivo. A imagem será exibida para conferência; a leitura automática depende de conectar um backend com Gemini API.</p><label class="upload-cta" for="mockupUpload">Selecionar imagem</label><input id="mockupUpload" type="file" accept="image/*" hidden><div id="mockupStatus" class="hint" aria-live="polite">Nenhum mockup selecionado.</div><img id="mockupPreview" alt="Prévia do mockup enviado" hidden></div>
+        <div class="section-label">Modelos de nota</div><div class="mockup-grid">
+          <button class="mockup-card selected" data-layout="classic"><span class="mini-note mini-classic">✦</span><b>Clássico</b></button>
+          <button class="mockup-card" data-layout="minimal"><span class="mini-note mini-minimal">✧</span><b>Minimalista</b></button>
+          <button class="mockup-card" data-layout="memorial"><span class="mini-note mini-memorial">❀</span><b>Memorial</b></button>
+          <button class="mockup-card" data-layout="modern"><span class="mini-note mini-modern">✦</span><b>Moderno</b></button>
+        </div>
+        <p class="hint">Integração Gemini preparada como ponto de extensão em <code>script.js</code>. Não coloque uma chave secreta diretamente no navegador; use uma função Cloudflare Worker/Pages Function.</p>
+      </div>
+    </section>
+
+    <section class="preview-panel">
+      <div class="preview-heading"><div><p class="eyebrow">PRÉ-VISUALIZAÇÃO AO VIVO</p><h2>Sua nota memorial</h2><p class="subheading">As alterações aparecem instantaneamente no modelo.</p></div><span class="live-pill"><span></span> Ao vivo</span></div>
+      <div class="preview-stage">
+        <article id="memorialNote" class="memorial-note frame-classic paper-ivory font-serif layout-classic">
+          <div class="note-inner">
+            <div class="note-ornament top-ornament">✦　❦　✦</div>
+            <div class="note-kicker">NOTA DE FALECIMENTO</div>
+            <div class="portrait-frame"><img id="portraitImage" alt="Foto do falecido(a)" hidden><div id="portraitPlaceholder"><i class="fa-solid fa-user"></i><span>Foto memorial</span></div></div>
+            <h2 id="previewName">Nome do(a) homenageado(a)</h2>
+            <div class="life-dates"><span id="previewBirth">Nascimento</span><i class="fa-solid fa-cross"></i><span id="previewDeath">Falecimento</span></div>
+            <div class="note-divider"><span>❦</span></div>
+            <p id="previewMessage" class="note-message">Com profundo pesar, comunicamos a partida de alguém muito especial. Que as lembranças, o amor e os momentos compartilhados permaneçam para sempre nos corações de todos.</p>
+            <div class="event-details">
+              <div><i class="fa-regular fa-clock"></i><p><b>Velório</b><span id="previewWakeTime">A confirmar</span><small id="previewWakePlace">Local a confirmar</small></p></div>
+              <div><i class="fa-solid fa-dove"></i><p><b>Sepultamento / cremação</b><span id="previewBurialTime">A confirmar</span><small id="previewBurialPlace">Local a confirmar</small></p></div>
+            </div>
+            <div class="note-footer">COM CARINHO E SAUDADE</div>
+            <div class="note-ornament bottom-ornament">❦</div>
+          </div>
+        </article>
+      </div>
+      <div class="export-bar">
+        <button id="downloadJpg" class="action-button"><i class="fa-regular fa-image"></i> Baixar JPG</button>
+        <button id="downloadPdf" class="action-button"><i class="fa-regular fa-file-pdf"></i> Baixar PDF</button>
+        <button id="printNote" class="action-button secondary"><i class="fa-solid fa-print"></i> Imprimir</button>
+      </div>
+      <div class="share-bar">
+        <button id="shareWhatsapp" class="share-button whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+        <button id="shareEmail" class="share-button email"><i class="fa-regular fa-envelope"></i> Enviar por e-mail</button>
+      </div>
+      <p class="footer-note"><i class="fa-solid fa-shield-heart"></i> Confira nomes, datas e locais antes de compartilhar ou imprimir.</p>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
